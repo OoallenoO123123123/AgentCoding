@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OoallenoO123123123 | GitHub 動態作品集</title>
+  <meta name="description" content="OoallenoO123123123 的 GitHub 作品集，動態讀取 Supabase 資料庫，包含所有儲存庫介紹與技術展示。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ===== CSS 變數 ===== */
+    :root {
+      --bg-primary: #f8fafc;
+      /* Slate 50 */
+      --bg-secondary: #ffffff;
+      /* 白色 */
+      --bg-card: #ffffff;
+      /* 卡片白 */
+      --bg-card-hover: #ffffff;
+      --accent-blue: #0969da;
+      /* 經典 GitHub 藍 */
+      --accent-purple: #8250df;
+      /* 經典 GitHub 紫 */
+      --accent-green: #1a7f37;
+      /* 經典 GitHub 綠 */
+      --accent-orange: #bc4c00;
+      /* 經典 GitHub 橘 */
+      --accent-yellow: #9a6700;
+      /* 經典 GitHub 黃 */
+      --text-primary: #0f172a;
+      /* Slate 900 */
+      --text-secondary: #475569;
+      /* Slate 600 */
+      --text-muted: #64748b;
+      /* Slate 500 */
+      --border-color: #d0d7de;
+      /* GitHub 淺灰邊框 */
+      --border-glow: rgba(9, 105, 218, 0.25);
+      --gradient-1: linear-gradient(135deg, #0969da 0%, #8250df 100%);
+      --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #eff6ff 100%);
+    }
+
+    /* ===== 重置與基礎 ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== 極簡科技點陣網格背景 ===== */
+    .grid-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+      opacity: 0.8;
+    }
+
+    /* 背景柔和漸層光斑 */
+    .grid-background::before {
+      content: '';
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(9, 105, 218, 0.05) 0%, transparent 70%);
+      top: -15%;
+      left: -15%;
+      pointer-events: none;
+    }
+
+    .grid-background::after {
+      content: '';
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(130, 80, 223, 0.04) 0%, transparent 70%);
+      bottom: -15%;
+      right: -15%;
+      pointer-events: none;
+    }
+
+    /* ===== 導覽列 ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(248, 250, 252, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+
+    .nav-logo .github-icon {
+      width: 32px;
+      height: 32px;
+      fill: var(--text-primary);
+      transition: fill 0.3s;
+    }
+
+    .nav-logo:hover {
+      color: var(--accent-blue);
+    }
+
+    .nav-logo:hover .github-icon {
+      fill: var(--accent-blue);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+    }
+
+    /* 頂部設定資料庫按鈕 */
+    .db-config-btn {
+      background: rgba(9, 105, 218, 0.08);
+      color: var(--accent-blue);
+      border: 1px solid rgba(9, 105, 218, 0.2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .db-config-btn:hover {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+
+    /* ===== Hero 區塊 ===== */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      background: var(--gradient-hero);
+      overflow: hidden;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 60% 30%, rgba(9, 105, 218, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 70%, rgba(130, 80, 223, 0.04) 0%, transparent 60%);
+      animation: heroGlow 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroGlow {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(20px, -20px) rotate(3deg);
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+
+    .avatar-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--accent-blue), var(--accent-purple), var(--accent-blue));
+      animation: rotateSpin 3.5s linear infinite;
+      z-index: 0;
+      opacity: 0.85;
+    }
+
+    @keyframes rotateSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .avatar-img {
+      position: relative;
+      z-index: 1;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #ffffff;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .online-badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      z-index: 2;
+      width: 18px;
+      height: 18px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(26, 127, 55, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px rgba(26, 127, 55, 0);
+      }
+    }
+
+    .hero-username {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--text-primary) 40%, var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-family: 'Fira Code', monospace;
+      font-weight: 500;
+    }
+
+    .hero-subtitle .typing-text {
+      color: var(--accent-green);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    .stat-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .stat-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .stat-item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 2.2rem;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: white;
+      text-decoration: none;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(9, 105, 218, 0.2);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(9, 105, 218, 0.35);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      animation: bounce 2s ease-in-out infinite;
+      font-weight: 500;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(8px);
+      }
+    }
+
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--text-muted);
+      border-bottom: 2px solid var(--text-muted);
+      transform: rotate(45deg);
+    }
+
+    /* ===== 主要內容 ===== */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    /* ===== 區塊標題 ===== */
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-blue);
+      background: rgba(9, 105, 218, 0.08);
+      border: 1px solid rgba(9, 105, 218, 0.2);
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title span {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-description {
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 0.95rem;
+    }
+
+    /* 資料來源狀態提示條 */
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      background: rgba(26, 127, 55, 0.08);
+      color: var(--accent-green);
+      border: 1px solid rgba(26, 127, 55, 0.15);
+      border-radius: 20px;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    
+    .source-badge.fallback {
+      background: rgba(188, 76, 0, 0.08);
+      color: var(--accent-orange);
+      border-color: rgba(188, 76, 0, 0.15);
+    }
+
+    /* ===== 儲存庫卡片網格 ===== */
+    .repos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.75rem;
+      min-height: 200px;
+    }
+
+    /* ===== 儲存庫卡片 ===== */
+    .repo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: cardReveal 0.6s ease both;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.02);
+    }
+
+    @keyframes cardReveal {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .repo-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--card-color-1, var(--accent-blue)), var(--card-color-2, var(--accent-purple)));
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .repo-card:hover {
+      border-color: rgba(9, 105, 218, 0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 30px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(9, 105, 218, 0.08);
+    }
+
+    .repo-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .repo-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      background: var(--icon-bg, rgba(9, 105, 218, 0.06));
+      border: 1px solid var(--icon-border, rgba(9, 105, 218, 0.15));
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+    }
+
+    .repo-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-fork {
+      background: rgba(130, 80, 223, 0.08);
+      color: var(--accent-purple);
+      border: 1px solid rgba(130, 80, 223, 0.2);
+    }
+
+    .badge-public {
+      background: rgba(26, 127, 55, 0.08);
+      color: var(--accent-green);
+      border: 1px solid rgba(26, 127, 55, 0.2);
+    }
+
+    .repo-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.6rem;
+      transition: color 0.2s;
+      word-break: break-all;
+    }
+
+    .repo-name:hover {
+      color: var(--accent-purple);
+    }
+
+    .repo-description {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .repo-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .lang-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .meta-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+      opacity: 0.7;
+    }
+
+    .repo-visit-btn {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.4rem 0.9rem;
+      background: rgba(9, 105, 218, 0.06);
+      color: var(--accent-blue);
+      border: 1px solid rgba(9, 105, 218, 0.15);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+
+    .repo-visit-btn:hover {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 8px rgba(9, 105, 218, 0.15);
+    }
+
+    /* ===== 語言標籤顏色 ===== */
+    .lang-JavaScript {
+      background: #f1e05a;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .lang-PHP {
+      background: #4f5d95;
+    }
+
+    .lang-HTML {
+      background: #e34c26;
+    }
+
+    .lang-CSS {
+      background: #563d7c;
+    }
+
+    .lang-Python {
+      background: #3572a5;
+    }
+
+    .lang-default, .lang-未知, .lang-多語言, .lang-學術專案, .lang-待定 {
+      background: #64748b;
+    }
+
+    /* ===== 骨架屏載入動畫 ===== */
+    .skeleton-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .skeleton-line {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes loading {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* ===== 技術技能區 ===== */
+    .skills-section {
+      margin-top: 5rem;
+    }
+
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: all 0.3s;
+      cursor: default;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.02);
+    }
+
+    .skill-tag:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+      background: rgba(9, 105, 218, 0.06);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(9, 105, 218, 0.1);
+    }
+
+    /* ===== 聯繫區 ===== */
+    .contact-section {
+      margin-top: 5rem;
+      text-align: center;
+    }
+
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 3.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(9, 105, 218, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .contact-card::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      right: -100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(130, 80, 223, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .contact-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .contact-text {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .contact-github-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 2.2rem;
+      background: #1f2937;
+      border: 1px solid #1f2937;
+      color: #ffffff;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(31, 41, 55, 0.15);
+    }
+
+    .contact-github-btn:hover {
+      background: #111827;
+      border-color: #111827;
+      box-shadow: 0 8px 25px rgba(31, 41, 55, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .contact-github-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: #ffffff;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2.5rem 2rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: rgba(248, 250, 252, 0.5);
+    }
+
+    footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== 分隔線 ===== */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+      margin: 5rem 0;
+    }
+
+    /* ===== Glassmorphism Config Modal 彈出視窗 ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.3);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 480px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active .modal-container {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--border-glow);
+    }
+
+    .modal-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.04);
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #085cc5;
+    }
+
+    /* ===== 響應式 ===== */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .repos-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-stats {
+        gap: 1.5rem;
+      }
+
+      .contact-card {
+        padding: 2.5rem 1.5rem;
+      }
+    }
+
+    /* ===== 自訂滾動條 ===== */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* ===== 游標光暈效果 ===== */
+    .cursor-glow {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(9, 105, 218, 0.05) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: all 0.15s ease;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 游標光暈 -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- 網格背景 -->
+  <div class="grid-background" id="gridBackground"></div>
+
+  <!-- 導覽列 -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <svg class="github-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+      </svg>
+      OoallenoO123123123
+    </a>
+    <ul class="nav-links">
+      <li><a href="#repositories">儲存庫</a></li>
+      <li><a href="#skills">技術</a></li>
+      <li><a href="#contact">聯繫</a></li>
+      <li><button class="db-config-btn" id="dbConfigBtn">⚙️ 資料庫設定</button></li>
+      <li><a href="https://github.com/OoallenoO123123123" target="_blank" style="margin-left: 0.5rem;">GitHub ↗</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero 區塊 -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="avatar-wrapper">
+        <div class="avatar-ring"></div>
+        <img class="avatar-img" src="https://avatars.githubusercontent.com/u/155875357?v=4" alt="OoallenoO123123123 的頭像"
+          id="heroAvatar" />
+        <div class="online-badge"></div>
+      </div>
+
+      <h1 class="hero-username">OoallenoO123123123</h1>
+      <p class="hero-subtitle">
+        <span class="typing-text" id="typingText"></span>
+        <span class="cursor">|</span>
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-value" id="statRepos">0</span>
+          <span class="stat-label">儲存庫</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="statStars">0</span>
+          <span class="stat-label">獲得星星</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="statLangCount">3</span>
+          <span class="stat-label">程式語言</span>
+        </div>
+      </div>
+
+      <a href="#repositories" class="hero-cta" id="exploreBtn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+        </svg>
+        探索作品集
+      </a>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>向下捲動</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- 主要內容 -->
+  <main>
+    <!-- 儲存庫區塊 -->
+    <section id="repositories">
+      <div class="section-header">
+        <div class="section-tag">// repositories</div>
+        <h2 class="section-title">所有<span>儲存庫</span></h2>
+        <p class="section-description">以下是我在 GitHub 上的所有公開專案，涵蓋多種技術與領域。</p>
+        <div>
+          <span class="source-badge" id="sourceBadge">
+            <span id="sourceDot" style="width: 8px; height: 8px; border-radius: 50%; background: #1a7f37; display: inline-block;"></span>
+            <span id="sourceText">讀取中...</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 動態載入儲存庫網格 -->
+      <div class="repos-grid" id="reposGrid">
+        <!-- 骨架屏載入動畫 (三個卡片長度) -->
+        <div class="skeleton-card">
+          <div class="skeleton-line" style="width: 50px; height: 50px; border-radius: 12px;"></div>
+          <div class="skeleton-line" style="width: 60%; height: 24px; margin-top: 1rem;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 60px;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 40px; margin-top: auto;"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line" style="width: 50px; height: 50px; border-radius: 12px;"></div>
+          <div class="skeleton-line" style="width: 40%; height: 24px; margin-top: 1rem;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 60px;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 40px; margin-top: auto;"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line" style="width: 50px; height: 50px; border-radius: 12px;"></div>
+          <div class="skeleton-line" style="width: 80%; height: 24px; margin-top: 1rem;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 60px;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 40px; margin-top: auto;"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 技術技能區塊 -->
+    <section id="skills" class="skills-section">
+      <div class="section-header">
+        <div class="section-tag">// tech-stack</div>
+        <h2 class="section-title">技術<span>技能</span></h2>
+        <p class="section-description">從儲存庫中發現的技術技能與工具</p>
+      </div>
+
+      <div class="skills-grid">
+        <span class="skill-tag">🌐 HTML5</span>
+        <span class="skill-tag">🎨 CSS3</span>
+        <span class="skill-tag">⚡ JavaScript</span>
+        <span class="skill-tag">🐘 PHP</span>
+        <span class="skill-tag">🤖 AI / Machine Learning</span>
+        <span class="skill-tag">🔧 Agentic Coding</span>
+        <span class="skill-tag">📦 Git / GitHub</span>
+        <span class="skill-tag">🖥️ 前端開發</span>
+        <span class="skill-tag">⚙️ 後端開發</span>
+        <span class="skill-tag">🧪 程式設計實驗</span>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 聯繫區塊 -->
+    <section id="contact" class="contact-section">
+      <div class="contact-card">
+        <h2 class="contact-title">一起合作 🚀</h2>
+        <p class="contact-text">
+          對我的專案有興趣？歡迎到 GitHub 查看更多內容，或是給個 ⭐ 表示支持！
+        </p>
+        <a href="https://github.com/OoallenoO123123123" target="_blank" class="contact-github-btn"
+          id="contactGithubBtn">
+          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          前往 GitHub 主頁
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Glassmorphism 設定視窗 -->
+  <div class="modal-overlay" id="configModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Supabase 資料庫設定</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="supabaseUrl">Supabase URL</label>
+        <input class="form-input" type="text" id="supabaseUrl" placeholder="https://xxxx.supabase.co" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="supabaseKey">Supabase Anon Key</label>
+        <input class="form-input" type="password" id="supabaseKey" placeholder="eyJhbGciOi..." />
+      </div>
+      <div class="modal-hint">
+        💡 提示：設定將會儲存在您瀏覽器的本地快取（Local Storage）中，不會上傳到任何伺服器。如果您在根目錄下建立了 <code>.env</code> 檔案，本地開啟網頁時會自動讀取 <code>.env</code>，不需要在此手動輸入。
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modalCancel">取消</button>
+        <button class="btn btn-primary" id="modalSave">儲存設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      ✨ 由 <a href="https://github.com/OoallenoO123123123" target="_blank">OoallenoO123123123</a> 製作
+      · 透過 GitHub Pages 託管
+      · 2026
+    </p>
+  </footer>
+
+  <script>
+    // ===== 備用本地資料 (Fallback) =====
+    const fallbackRepos = [
+      {
+        id: 1,
+        name: "Agentic-Coding",
+        emoji: "🤖",
+        url: "https://github.com/OoallenoO123123123/Agentic-Coding",
+        description: "探索 Agentic AI 程式設計的專案，運用 JavaScript 實現智能代理程式（Agent）的程式撰寫技術。這是一個以自動化代理為核心的程式設計實驗專案，展示如何利用 AI 輔助完成複雜的程式任務。此儲存庫獲得了 ⭐ 1 顆星的認可。",
+        is_fork: false,
+        language: "JavaScript",
+        feature: "1 星",
+        card_color_1: "#0969da",
+        card_color_2: "#8250df"
+      },
+      {
+        id: 2,
+        name: "AI",
+        emoji: "🧠",
+        url: "https://github.com/OoallenoO123123123/AI",
+        description: "從原始作者 Fork 而來的人工智慧相關儲存庫，包含豐富 of AI 學習資源與實作範例。儲存庫大小達 65,589 KB，顯示這是一個內容相當豐富的 AI 資料集或學習材料。適合作為 AI 學習與研究的參考資源。",
+        is_fork: true,
+        language: "多語言",
+        feature: "Forked",
+        card_color_1: "#8250df",
+        card_color_2: "#bc4c00"
+      },
+      {
+        id: 3,
+        name: "AI-",
+        emoji: "📚",
+        url: "https://github.com/OoallenoO123123123/AI-",
+        description: "人工智慧課程相關的作業與實作儲存庫（B11090033 陳俊維）。包含課堂學習內容、程式作業及 AI 相關實驗，共有 8 個開放議題（Issues），代表此專案持續活躍開發中。這是學習 AI 領域技術的重要記錄。",
+        is_fork: false,
+        language: "學術專案",
+        feature: "8 Issues",
+        card_color_1: "#bc4c00",
+        card_color_2: "#9a6700"
+      },
+      {
+        id: 4,
+        name: "php",
+        emoji: "🐘",
+        url: "https://github.com/OoallenoO123123123/php",
+        description: "PHP 後端開發相關的專案儲存庫，展示伺服器端腳本語言的應用。包含 PHP 程式設計的實踐與練習，涵蓋網頁後端開發、資料庫互動等核心技術。最後更新於 2024 年 6 月，是掌握 PHP 開發技術的良好範例。",
+        is_fork: false,
+        language: "PHP",
+        feature: "後端開發",
+        card_color_1: "#9a6700",
+        card_color_2: "#1a7f37"
+      },
+      {
+        id: 5,
+        name: "html-",
+        emoji: "🌐",
+        url: "https://github.com/OoallenoO123123123/html-",
+        description: "HTML 前端開發相關的儲存庫，展示網頁設計與前端技術的應用。包含 HTML 結構設計、網頁布局與互動效果的實作練習，展示了扎實的前端開發基礎能力。儲存庫大小 233 KB，包含完整的網頁範例。",
+        is_fork: false,
+        language: "HTML",
+        feature: "前端設計",
+        card_color_1: "#1a7f37",
+        card_color_2: "#0969da"
+      },
+      {
+        id: 6,
+        name: "-",
+        emoji: "📂",
+        url: "https://github.com/OoallenoO123123123/-",
+        description: "這是一個新建立的儲存庫，目前尚在初始化階段。名稱為「-」，預計作為新專案的起點或實驗性開發用途。期待未來這個儲存庫會展現更多精彩內容！",
+        is_fork: false,
+        language: "待定",
+        feature: "初始化中",
+        card_color_1: "#64748b",
+        card_color_2: "#475569"
+      }
+    ];
+
+    // ===== 游標光暈 =====
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top = e.clientY + 'px';
+    });
+
+    // ===== 打字機效果 =====
+    const phrases = [
+      '🚀 開發者 & 學習者',
+      '🤖 AI 探索者',
+      '💻 JavaScript Developer',
+      '🐘 PHP Backend',
+      '🌐 前端設計師',
+    ];
+    let phraseIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    const typingEl = document.getElementById('typingText');
+
+    function typeEffect() {
+      const current = phrases[phraseIdx];
+      if (!isDeleting) {
+        typingEl.textContent = current.substring(0, charIdx + 1);
+        charIdx++;
+        if (charIdx === current.length) {
+          isDeleting = true;
+          setTimeout(typeEffect, 1800);
+          return;
+        }
+      } else {
+        typingEl.textContent = current.substring(0, charIdx - 1);
+        charIdx--;
+        if (charIdx === 0) {
+          isDeleting = false;
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+        }
+      }
+      setTimeout(typeEffect, isDeleting ? 60 : 100);
+    }
+    typeEffect();
+
+    // ===== 數字計數動畫 =====
+    function animateCounter(el, target, duration = 1500) {
+      if (!el) return;
+      const start = 0;
+      const startTime = performance.now();
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(update);
+    }
+
+    // ===== 嘗試載入 .env 檔案 =====
+    async function loadEnv() {
+      try {
+        const response = await fetch('.env');
+        if (!response.ok) throw new Error('網頁直接開啟或 .env 檔案不存在');
+        const text = await response.text();
+        const env = {};
+        text.split(/\r?\n/).forEach(line => {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) return;
+          const parts = trimmed.split('=');
+          if (parts.length >= 2) {
+            const key = parts[0].trim();
+            const value = parts.slice(1).join('=').trim().replace(/^["']|["']$/g, '');
+            env[key] = value;
+          }
+        });
+        return env;
+      } catch (err) {
+        console.log('無法藉由 HTTP 請求取得本地 .env 檔案:', err.message);
+        return null;
+      }
+    }
+
+    // ===== 獲取 Supabase 連線資訊的優先順序 =====
+    async function getSupabaseCredentials() {
+      // 1. 優先嘗試讀取本地 .env
+      const env = await loadEnv();
+      if (env && env.SUPABASE_URL && env.SUPABASE_KEY) {
+        return {
+          url: env.SUPABASE_URL,
+          key: env.SUPABASE_KEY,
+          source: 'env'
+        };
+      }
+
+      // 2. 次要嘗試讀取 LocalStorage 快取
+      const cachedUrl = localStorage.getItem('supabase_url');
+      const cachedKey = localStorage.getItem('supabase_key');
+      if (cachedUrl && cachedKey) {
+        return {
+          url: cachedUrl,
+          key: cachedKey,
+          source: 'cache'
+        };
+      }
+
+      return null;
+    }
+
+    // ===== 依照特色標籤取得 icon =====
+    function getFeatureIcon(feature) {
+      if (!feature) return '';
+      
+      const starIcon = `<svg class="meta-icon" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" /></svg>`;
+      const forkIcon = `<svg class="meta-icon" viewBox="0 0 16 16"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75v-.878a2.25 2.25 0 111.5 0v.878a2.25 2.25 0 01-2.25 2.25h-1.5v2.128a2.251 2.251 0 11-1.5 0V8.5h-1.5A2.25 2.25 0 013 6.25v-.878a2.25 2.25 0 111.5 0z" /></svg>`;
+      const issueIcon = `<svg class="meta-icon" viewBox="0 0 16 16"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm9 3a1 1 0 11-2 0 1 1 0 012 0zm-.25-6.25a.75.75 0 00-1.5 0v3.5a.75.75 0 001.5 0v-3.5z" /></svg>`;
+      const codeIcon = `<svg class="meta-icon" viewBox="0 0 16 16"><path d="M4.72 3.22a.75.75 0 011.06 1.06L2.06 8l3.72 3.72a.75.75 0 11-1.06 1.06L.47 8.53a.75.75 0 010-1.06l4.25-4.25zm6.56 0a.75.75 0 010 1.06L13.94 8l-3.66 3.66a.75.75 0 01-1.06-1.06l4.25-4.25a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25z" /></svg>`;
+      const infoIcon = `<svg class="meta-icon" viewBox="0 0 16 16"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-1.75a.75.75 0 01.75-.75h1a.75.75 0 01.75.75v4.25a.75.75 0 01-1.5 0V7.25h-.25a.75.75 0 01-.75-.75zM8 4a1 1 0 110-2 1 1 0 010 2z" /></svg>`;
+
+      if (feature.toLowerCase().includes('星') || feature.toLowerCase().includes('star')) return starIcon;
+      if (feature.toLowerCase().includes('fork')) return forkIcon;
+      if (feature.toLowerCase().includes('issue') || feature.toLowerCase().includes('議題')) return issueIcon;
+      if (feature.toLowerCase().includes('開發') || feature.toLowerCase().includes('設計')) return codeIcon;
+      return infoIcon;
+    }
+
+    // ===== 渲染卡片到 HTML 容器 =====
+    function renderRepos(repos) {
+      const grid = document.getElementById('reposGrid');
+      grid.innerHTML = ''; // 清空骨架屏
+
+      if (!repos || repos.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">目前沒有任何儲存庫資料。</div>';
+        return;
+      }
+
+      repos.forEach((repo, index) => {
+        // 卡片漸層顏色與 Icon 設定
+        const color1 = repo.card_color_1 || '#0969da';
+        const color2 = repo.card_color_2 || '#8250df';
+        const emoji = repo.emoji || '📁';
+        const isFork = repo.is_fork || false;
+
+        const card = document.createElement('article');
+        card.className = 'repo-card';
+        card.style.setProperty('--card-color-1', color1);
+        card.style.setProperty('--card-color-2', color2);
+        card.style.animationDelay = `${index * 0.05}s`;
+
+        // 判斷 icon 背景顏色
+        let iconBg = 'rgba(9, 105, 218, 0.06)';
+        let iconBorder = 'rgba(9, 105, 218, 0.15)';
+        if (color1.startsWith('#8250df')) {
+          iconBg = 'rgba(130, 80, 223, 0.06)';
+          iconBorder = 'rgba(130, 80, 223, 0.15)';
+        } else if (color1.startsWith('#bc4c00')) {
+          iconBg = 'rgba(188, 76, 0, 0.06)';
+          iconBorder = 'rgba(188, 76, 0, 0.15)';
+        } else if (color1.startsWith('#9a6700')) {
+          iconBg = 'rgba(154, 103, 0, 0.06)';
+          iconBorder = 'rgba(154, 103, 0, 0.15)';
+        } else if (color1.startsWith('#1a7f37')) {
+          iconBg = 'rgba(26, 127, 55, 0.06)';
+          iconBorder = 'rgba(26, 127, 55, 0.15)';
+        }
+
+        // 組合卡片內部 HTML
+        card.innerHTML = `
+          <div class="repo-card-header">
+            <div class="repo-icon-wrap" style="--icon-bg: ${iconBg}; --icon-border: ${iconBorder};">
+              ${emoji}
+            </div>
+            <div class="repo-badges">
+              ${isFork ? '<span class="badge badge-fork">⑂ Fork</span>' : ''}
+              <span class="badge badge-public">● 公開</span>
+            </div>
+          </div>
+          <a href="${repo.url}" target="_blank" class="repo-name" id="repo-${repo.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}">
+            📁 ${repo.name}
+          </a>
+          <p class="repo-description">
+            ${repo.description || '無專案說明。'}
+          </p>
+          <div class="repo-meta">
+            <span class="meta-item">
+              <span class="lang-dot lang-${repo.language}"></span>
+              ${repo.language}
+            </span>
+            ${repo.feature ? `
+            <span class="meta-item">
+              ${getFeatureIcon(repo.feature)}
+              ${repo.feature}
+            </span>
+            ` : ''}
+            <a href="${repo.url}" target="_blank" class="repo-visit-btn" id="visit-${repo.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}">
+              查看 →
+            </a>
+          </div>
+        `;
+
+        // 綁定滑鼠移動光效
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          card.style.setProperty('--mouse-x', `${x}%`);
+          card.style.setProperty('--mouse-y', `${y}%`);
+        });
+
+        grid.appendChild(card);
+      });
+
+      // 觸發滾動動畫
+      triggerScrollAnimation();
+    }
+
+    // ===== 觸發滾動動畫 =====
+    function triggerScrollAnimation() {
+      const animObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.skill-tag, .contact-card, .repo-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        animObserver.observe(el);
+      });
+    }
+
+    // ===== 主流程：載入 Supabase 或 Fallback 資料 =====
+    async function initApp() {
+      const badge = document.getElementById('sourceBadge');
+      const badgeDot = document.getElementById('sourceDot');
+      const badgeText = document.getElementById('sourceText');
+      const statRepos = document.getElementById('statRepos');
+      const statStars = document.getElementById('statStars');
+      const statLangCount = document.getElementById('statLangCount');
+
+      let repositories = [];
+      const creds = await getSupabaseCredentials();
+
+      if (creds) {
+        try {
+          const { createClient } = supabase;
+          const supabaseClient = createClient(creds.url, creds.key);
+
+          // 向 Supabase 查詢資料表
+          const { data, error } = await supabaseClient
+            .from('repositories')
+            .select('*')
+            .order('id', { ascending: true });
+
+          if (error) throw error;
+
+          repositories = data;
+
+          // 更新狀態標籤
+          badge.className = 'source-badge';
+          badgeDot.style.background = '#1a7f37';
+          badgeText.textContent = `Supabase 資料庫連線成功 (來源: ${creds.source === 'env' ? '.env 檔案' : '瀏覽器快取'})`;
+        } catch (err) {
+          console.error('Supabase 讀取資料失敗:', err);
+          repositories = fallbackRepos;
+          
+          // 更新狀態標籤為警告（Fallback）
+          badge.className = 'source-badge fallback';
+          badgeDot.style.background = '#bc4c00';
+          badgeText.textContent = `Supabase 連線失敗，已載入備用資料 (錯誤: ${err.message || err})`;
+        }
+      } else {
+        // 無設定，載入備用資料
+        repositories = fallbackRepos;
+        badge.className = 'source-badge fallback';
+        badgeDot.style.background = '#bc4c00';
+        badgeText.textContent = '未設定 Supabase，目前顯示靜態備用資料';
+      }
+
+      // 渲染卡片
+      renderRepos(repositories);
+
+      // 動態更新 Hero Stats 計數器
+      const totalRepos = repositories.length;
+      
+      // 計算星星與語言
+      let totalStars = 0;
+      const languages = new Set();
+      repositories.forEach(repo => {
+        if (repo.feature && (repo.feature.includes('星') || repo.feature.includes('Star'))) {
+          const starMatch = repo.feature.match(/\d+/);
+          if (starMatch) totalStars += parseInt(starMatch[0]);
+        }
+        if (repo.language && repo.language !== '多語言' && repo.language !== '學術專案' && repo.language !== '待定') {
+          languages.add(repo.language);
+        }
+      });
+
+      // 數字動態跳動
+      animateCounter(statRepos, totalRepos);
+      animateCounter(statStars, totalStars || 1, 800);
+      animateCounter(statLangCount, languages.size || 3, 500);
+    }
+
+    // ===== Modal 視窗交互與快取邏輯 =====
+    const configModal = document.getElementById('configModal');
+    const dbConfigBtn = document.getElementById('dbConfigBtn');
+    const modalClose = document.getElementById('modalClose');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalSave = document.getElementById('modalSave');
+    
+    const inputUrl = document.getElementById('supabaseUrl');
+    const inputKey = document.getElementById('supabaseKey');
+
+    // 開啟設定彈出視窗
+    dbConfigBtn.addEventListener('click', () => {
+      inputUrl.value = localStorage.getItem('supabase_url') || '';
+      inputKey.value = localStorage.getItem('supabase_key') || '';
+      configModal.classList.add('active');
+    });
+
+    // 關閉視窗
+    const closeModal = () => {
+      configModal.classList.remove('active');
+    };
+    modalClose.addEventListener('click', closeModal);
+    modalCancel.addEventListener('click', closeModal);
+    configModal.addEventListener('click', (e) => {
+      if (e.target === configModal) closeModal();
+    });
+
+    // 儲存設定到 LocalStorage
+    modalSave.addEventListener('click', () => {
+      const url = inputUrl.value.trim();
+      const key = inputKey.value.trim();
+
+      if (url && key) {
+        localStorage.setItem('supabase_url', url);
+        localStorage.setItem('supabase_key', key);
+      } else {
+        localStorage.removeItem('supabase_url');
+        localStorage.removeItem('supabase_key');
+      }
+
+      closeModal();
+      // 重新加載資料庫
+      document.getElementById('reposGrid').innerHTML = `
+        <div class="skeleton-card">
+          <div class="skeleton-line" style="width: 50px; height: 50px; border-radius: 12px;"></div>
+          <div class="skeleton-line" style="width: 60%; height: 24px; margin-top: 1rem;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 60px;"></div>
+          <div class="skeleton-line" style="width: 100%; height: 40px; margin-top: auto;"></div>
+        </div>
+      `;
+      initApp();
+    });
+
+    // 初始化應用程式
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+    });
+  </script>
+</body>
+
+</html>

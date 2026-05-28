@@ -1,1 +1,5 @@
 ui-ux-pro-max-skill/
+.env
+.venv/
+__pycache__/
+*.pyc
