@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OoallenoO123123123 | 極光 UI/UX 作品集</title>
+  <meta name="description" content="OoallenoO123123123 的 GitHub 頂級作品集，採用極光設計系統展示個人儲存庫與開發技術。" />
+  
+  <!-- 引入 Google Fonts: Space Grotesk (標題) 與 Archivo (內文) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== 設計系統變數 ===== */
+    :root {
+      --bg-deep: #07070a;
+      --bg-card: rgba(15, 15, 20, 0.4);
+      --bg-card-hover: rgba(22, 22, 30, 0.55);
+      --border-light: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(0, 240, 255, 0.4);
+      
+      /* 極光霓虹主色 */
+      --aurora-cyan: #00f0ff;
+      --aurora-magenta: #ff007f;
+      --aurora-purple: #7a00ff;
+      --aurora-green: #00ff66;
+      
+      /* 文字顏色 */
+      --text-primary: #f4f4f5;
+      --text-secondary: #a1a1aa;
+      --text-muted: #52525b;
+      
+      /* 字型系統 */
+      --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      
+      --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* ===== 全域重置與基礎 ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-deep);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== 動態極光背景 (Aurora Container) ===== */
+    .aurora-container {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .aurora-sphere {
+      position: absolute;
+      width: 70vw;
+      height: 70vw;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.16;
+      mix-blend-mode: screen;
+      animation: aurora-float 24s infinite alternate ease-in-out;
+    }
+
+    .sphere-1 {
+      background: radial-gradient(circle, var(--aurora-cyan) 0%, transparent 70%);
+      top: -15%; left: -10%;
+      animation-duration: 20s;
+    }
+
+    .sphere-2 {
+      background: radial-gradient(circle, var(--aurora-magenta) 0%, transparent 70%);
+      bottom: -15%; right: -10%;
+      animation-duration: 28s;
+      animation-delay: -6s;
+    }
+
+    .sphere-3 {
+      background: radial-gradient(circle, var(--aurora-purple) 0%, transparent 70%);
+      top: 40%; left: 35%;
+      animation-duration: 24s;
+      animation-delay: -12s;
+    }
+
+    @keyframes aurora-float {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(8%, 10%) scale(1.08) rotate(180deg); }
+      100% { transform: translate(-4%, -6%) scale(0.92) rotate(360deg); }
+    }
+
+    /* ===== 細緻網格背景疊加 ===== */
+    .grid-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 1;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* ===== 頂部導覽列 ===== */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(7, 7, 10, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-light);
+      height: 70px;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      height: 100%;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.25rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--aurora-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--aurora-cyan);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: var(--transition-smooth);
+    }
+
+    .nav-menu a:hover {
+      color: var(--text-primary);
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+    }
+
+    .github-link {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-light);
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .github-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-hover);
+    }
+
+    /* ===== Hero 核心視覺區 ===== */
+    .hero-section {
+      position: relative;
+      z-index: 2;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+    }
+
+    .hero-wrapper {
+      text-align: center;
+      max-width: 800px;
+    }
+
+    .profile-glow {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glow-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--aurora-cyan), var(--aurora-magenta), var(--aurora-purple), var(--aurora-cyan));
+      animation: rotate-ring 4s linear infinite;
+      opacity: 0.75;
+      filter: blur(4px);
+    }
+
+    @keyframes rotate-ring {
+      to { transform: rotate(360deg); }
+    }
+
+    .avatar {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      padding: 5px;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .status-badge {
+      position: absolute;
+      bottom: 5px; right: 5px;
+      z-index: 2;
+      width: 20px;
+      height: 20px;
+      background: var(--aurora-green);
+      border-radius: 50%;
+      border: 3px solid var(--bg-deep);
+      box-shadow: 0 0 10px var(--aurora-green);
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, var(--aurora-cyan), var(--aurora-magenta) 50%, var(--aurora-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .cursor-blink {
+      animation: blink 0.9s infinite;
+      color: var(--aurora-cyan);
+      font-weight: 700;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* 頂級統計面板 */
+    .stats-dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 500px;
+      margin: 0 auto 3rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 1.25rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: var(--transition-smooth);
+    }
+
+    .stat-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+    }
+
+    .stat-num {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card:nth-child(1) .stat-num { color: var(--aurora-cyan); }
+    .stat-card:nth-child(2) .stat-num { color: var(--aurora-magenta); }
+    .stat-card:nth-child(3) .stat-num { color: var(--aurora-purple); }
+
+    .stat-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 2.2rem;
+      background: linear-gradient(135deg, var(--aurora-cyan), var(--aurora-purple));
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 8px 30px rgba(0, 240, 255, 0.25);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--aurora-magenta), var(--aurora-cyan));
+      opacity: 0;
+      transition: var(--transition-smooth);
+      z-index: 0;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(255, 0, 127, 0.4);
+    }
+
+    .cta-btn:hover::before {
+      opacity: 1;
+    }
+
+    .cta-btn span, .cta-btn svg {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== 主版面配置 ===== */
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ===== 作品集網格與玻璃卡片 ===== */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2rem;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(20px) saturate(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.1);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    /* 滑鼠懸停邊框高亮與下方極光投影 */
+    .glass-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--border-hover);
+      box-shadow: 
+        0 15px 35px -10px rgba(0, 240, 255, 0.15),
+        0 0 25px -5px rgba(122, 0, 255, 0.1);
+    }
+
+    /* 卡片滑鼠光效裝飾 */
+    .glass-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.04), transparent 40%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      z-index: 2;
+    }
+
+    .icon-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: var(--transition-smooth);
+    }
+
+    .glass-card:hover .icon-badge {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .tag-primary {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--aurora-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+    }
+
+    .tag-fork {
+      background: rgba(255, 0, 127, 0.1);
+      color: var(--aurora-magenta);
+      border: 1px solid rgba(255, 0, 127, 0.2);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      margin-bottom: 0.75rem;
+      z-index: 2;
+      display: inline-block;
+      transition: var(--transition-smooth);
+    }
+
+    .card-title:hover {
+      color: var(--aurora-cyan);
+    }
+
+    .card-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+      z-index: 2;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border-light);
+      padding-top: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+
+    .meta-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .lang-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .lang-js { background: #f1e05a; }
+    .lang-php { background: #4f5d95; }
+    .lang-html { background: #e34c26; }
+    .lang-other { background: var(--text-muted); }
+
+    .meta-detail svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .visit-link {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--aurora-cyan);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: var(--transition-smooth);
+    }
+
+    .visit-link:hover {
+      color: var(--text-primary);
+      transform: translateX(3px);
+    }
+
+    /* ===== 技術堆疊區 ===== */
+    .skills-section {
+      margin-top: 6rem;
+    }
+
+    .skills-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 3rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .skill-badge {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 1.25rem;
+      text-align: center;
+      transition: var(--transition-smooth);
+    }
+
+    .skill-badge:hover {
+      background: rgba(0, 240, 255, 0.03);
+      border-color: var(--border-hover);
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .skill-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .skill-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    /* ===== 聯繫合作區 ===== */
+    .contact-section {
+      margin-top: 6rem;
+      text-align: center;
+    }
+
+    .contact-panel {
+      position: relative;
+      background: radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(255, 0, 127, 0.05) 0%, transparent 40%),
+                  var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 32px;
+      padding: 4rem 2rem;
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      overflow: hidden;
+    }
+
+    .contact-title {
+      font-family: var(--font-heading);
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .contact-subtitle {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2.5rem;
+      background: #fff;
+      color: #07070a;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 50px;
+      transition: var(--transition-smooth);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.3);
+      background: var(--aurora-cyan);
+      color: #07070a;
+    }
+
+    .contact-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      margin-top: 8rem;
+      border-top: 1px solid var(--border-light);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--aurora-cyan);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    footer a:hover {
+      color: var(--text-primary);
+    }
+
+    /* ===== 分隔線 ===== */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+      margin: 6rem 0;
+    }
+
+    /* ===== 響應式佈局調整 ===== */
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .stats-dashboard { gap: 1rem; }
+      .contact-panel { padding: 3rem 1.5rem; }
+      .hero-title { font-size: 3rem; }
+    }
+
+    /* ===== 自訂捲動條 ===== */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 5px;
+      border: 2px solid var(--bg-deep);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 動態極光背景 -->
+  <div class="aurora-container">
+    <div class="aurora-sphere sphere-1"></div>
+    <div class="aurora-sphere sphere-2"></div>
+    <div class="aurora-sphere sphere-3"></div>
+  </div>
+
+  <!-- 精緻細微網格疊加 -->
+  <div class="grid-overlay"></div>
+
+  <!-- 頂部導覽列 -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        OoallenoO123123123
+        <div class="logo-dot"></div>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#repositories">專案</a></li>
+        <li><a href="#skills">技術堆疊</a></li>
+        <li><a href="#contact">聯絡合作</a></li>
+      </ul>
+      <a href="https://github.com/OoallenoO123123123" target="_blank" class="github-link nav-menu">
+        <svg height="20" width="20" viewBox="0 0 16 16" fill="var(--text-primary)">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero 區塊 -->
+  <section class="hero-section" id="home">
+    <div class="hero-wrapper">
+      <div class="profile-glow">
+        <div class="glow-ring"></div>
+        <div class="avatar">
+          <img src="https://avatars.githubusercontent.com/u/155875357?v=4" alt="OoallenoO123123123's Avatar" />
+        </div>
+        <div class="status-badge"></div>
+      </div>
+
+      <h1 class="hero-title">
+        我是 <span class="text-gradient">OoallenoO123123123</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        <span>$ </span><span id="typingText"></span><span class="cursor-blink">_</span>
+      </p>
+
+      <!-- 統計數據面板 -->
+      <div class="stats-dashboard">
+        <div class="stat-card">
+          <span class="stat-num" id="countRepos">0</span>
+          <span class="stat-lbl">儲存庫</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="countStars">0</span>
+          <span class="stat-lbl">星星認可</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">3</span>
+          <span class="stat-lbl">開發語言</span>
+        </div>
+      </div>
+
+      <a href="#repositories" class="cta-btn">
+        <span>探索精選作品</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.5 7.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1z"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- 主要內容區 -->
+  <main>
+    
+    <!-- 儲存庫區塊 -->
+    <section id="repositories">
+      <h2 class="section-title">精選專案 <span class="text-gradient">Projects</span></h2>
+      <p class="section-desc">以下是我在 GitHub 上的公開儲存庫，涵蓋 AI 技術、網頁後端與前端設計。</p>
+
+      <div class="projects-grid">
+        
+        <!-- 專案 1: Agentic-Coding -->
+        <article class="glass-card">
+          <div class="card-header">
+            <div class="icon-badge">🤖</div>
+            <div class="card-tags">
+              <span class="tag tag-primary">公開</span>
+            </div>
+          </div>
+          <a href="https://github.com/OoallenoO123123123/Agentic-Coding" target="_blank" class="card-title">Agentic-Coding</a>
+          <p class="card-text">
+            探索 Agentic AI 程式設計的先鋒專案，運用 JavaScript 實現智能代理程式（Agent）自動化撰寫與代碼生成。這是一個專注於 AI 自動化與代理程式開發的實驗室。
+          </p>
+          <div class="card-footer">
+            <span class="meta-detail">
+              <span class="lang-dot lang-js"></span>
+              JavaScript
+            </span>
+            <span class="meta-detail">
+              <svg viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+              1 Stars
+            </span>
+            <a href="https://github.com/OoallenoO123123123/Agentic-Coding" target="_blank" class="visit-link">
+              查看專案 →
+            </a>
+          </div>
+        </article>
+
+        <!-- 專案 2: AI (Fork) -->
+        <article class="glass-card">
+          <div class="card-header">
+            <div class="icon-badge">🧠</div>
+            <div class="card-tags">
+              <span class="tag tag-fork">Forked</span>
+              <span class="tag tag-primary">公開</span>
+            </div>
+          </div>
+          <a href="https://github.com/OoallenoO123123123/AI" target="_blank" class="card-title">AI</a>
+          <p class="card-text">
+            從原始作者 Fork 的人工智慧實戰資源庫，儲存庫達 65MB，蘊含豐富的深度學習、機器學習理論與實務範例，是進行 AI 研究與技術探索的基石。
+          </p>
+          <div class="card-footer">
+            <span class="meta-detail">
+              <span class="lang-dot lang-other"></span>
+              多語言資源
+            </span>
+            <span class="meta-detail">
+              <svg viewBox="0 0 16 16"><path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75v-.878a2.25 2.25 0 111.5 0v.878a2.25 2.25 0 01-2.25 2.25h-1.5v2.128a2.251 2.251 0 11-1.5 0V8.5h-1.5A2.25 2.25 0 013 6.25v-.878a2.25 2.25 0 111.5 0z"/></svg>
+              Forked
+            </span>
+            <a href="https://github.com/OoallenoO123123123/AI" target="_blank" class="visit-link">
+              查看專案 →
+            </a>
+          </div>
+        </article>
+
+        <!-- 專案 3: AI- -->
+        <article class="glass-card">
+          <div class="card-header">
+            <div class="icon-badge">📚</div>
+            <div class="card-tags">
+              <span class="tag tag-primary">公開</span>
+            </div>
+          </div>
+          <a href="https://github.com/OoallenoO123123123/AI-" target="_blank" class="card-title">AI-</a>
+          <p class="card-text">
+            人工智慧學術與課堂實踐專案（陳俊維）。收錄豐富的課堂作業、AI 理論演算法實驗，並保有 8 個開放 Issues，展現持續維護與實作探索的精神。
+          </p>
+          <div class="card-footer">
+            <span class="meta-detail">
+              <span class="lang-dot lang-other"></span>
+              學術研究
+            </span>
+            <span class="meta-detail">
+              <svg viewBox="0 0 16 16"><path d="M1.5 8a6.5 6.5 0 1113 0A6.5 6.5 0 011.5 8zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.557-1.392L8.5 7.742V4.75z"/></svg>
+              8 Issues
+            </span>
+            <a href="https://github.com/OoallenoO123123123/AI-" target="_blank" class="visit-link">
+              查看專案 →
+            </a>
+          </div>
+        </article>
+
+        <!-- 專案 4: php -->
+        <article class="glass-card">
+          <div class="card-header">
+            <div class="icon-badge">🐘</div>
+            <div class="card-tags">
+              <span class="tag tag-primary">公開</span>
+            </div>
+          </div>
+          <a href="https://github.com/OoallenoO123123123/php" target="_blank" class="card-title">php</a>
+          <p class="card-text">
+            PHP 後端架構與 API 開發實作。深入伺服器端技術，包含 API 路由、資料庫互動以及網頁後端核心技術架構。
+          </p>
+          <div class="card-footer">
+            <span class="meta-detail">
+              <span class="lang-dot lang-php"></span>
+              PHP
+            </span>
+            <span class="meta-detail">
+              <svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.5 7.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1z"/></svg>
+              後端工程
+            </span>
+            <a href="https://github.com/OoallenoO123123123/php" target="_blank" class="visit-link">
+              查看專案 →
+            </a>
+          </div>
+        </article>
+
+        <!-- 專案 5: html- -->
+        <article class="glass-card">
+          <div class="card-header">
+            <div class="icon-badge">🌐</div>
+            <div class="card-tags">
+              <span class="tag tag-primary">公開</span>
+            </div>
+          </div>
+          <a href="https://github.com/OoallenoO123123123/html-" target="_blank" class="card-title">html-</a>
+          <p class="card-text">
+            精緻前端頁面與 UI 組件庫開發。展示了扎實的前端切版基礎、響應式網頁佈局（RWD）以及動態視覺互動效果。
+          </p>
+          <div class="card-footer">
+            <span class="meta-detail">
+              <span class="lang-dot lang-html"></span>
+              HTML / CSS
+            </span>
+            <span class="meta-detail">
+              <svg viewBox="0 0 16 16"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0114.25 13H8.06l-2.573 2.573A1.458 1.458 0 013 14.543V13H1.75A1.75 1.75 0 010 11.25v-9.5z"/></svg>
+              233 KB
+            </span>
+            <a href="https://github.com/OoallenoO123123123/html-" target="_blank" class="visit-link">
+              查看專案 →
+            </a>
+          </div>
+        </article>
+
+        <!-- 專案 6: AgentCoding -->
+        <article class="glass-card">
+          <div class="card-header">
+            <div class="icon-badge">✨</div>
+            <div class="card-tags">
+              <span class="tag tag-primary">公開</span>
+            </div>
+          </div>
+          <a href="https://github.com/OoallenoO123123123/AgentCoding" target="_blank" class="card-title">AgentCoding</a>
+          <p class="card-text">
+            本個人極光作品集的官方儲存庫。本網頁為您在 GitHub 上的第一個自動化 AI 託管作品集，展示了自動化部署與極致的 UI/UX 美學實踐。
+          </p>
+          <div class="card-footer">
+            <span class="meta-detail">
+              <span class="lang-dot lang-html"></span>
+              HTML / CSS
+            </span>
+            <span class="meta-detail">
+              <svg viewBox="0 0 16 16"><path d="M1.5 8a6.5 6.5 0 1113 0A6.5 6.5 0 011.5 8zM8 0a8 8 0 100 16A8 8 0 008 0z"/></svg>
+              GitHub Pages
+            </span>
+            <a href="https://github.com/OoallenoO123123123/AgentCoding" target="_blank" class="visit-link">
+              查看專案 →
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 技術技能區塊 -->
+    <section id="skills" class="skills-section">
+      <h2 class="section-title">技術堆疊 <span class="text-gradient">Tech Stack</span></h2>
+      <p class="section-desc">透過專案實踐掌握的現代化軟體工程技術與工具。</p>
+
+      <div class="skills-container">
+        <div class="skills-grid">
+          <div class="skill-badge">
+            <span class="skill-icon">🌐</span>
+            <span class="skill-name">HTML5 / RWD</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">🎨</span>
+            <span class="skill-name">CSS3 / Aurora UI</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">⚡</span>
+            <span class="skill-name">JavaScript</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">🐘</span>
+            <span class="skill-name">PHP Backend</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">🧠</span>
+            <span class="skill-name">AI / Deep Learning</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">🤖</span>
+            <span class="skill-name">Agentic Coding</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">📦</span>
+            <span class="skill-name">Git / GitHub</span>
+          </div>
+          <div class="skill-badge">
+            <span class="skill-icon">🚀</span>
+            <span class="skill-name">GitHub Pages</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 聯絡區塊 -->
+    <section id="contact" class="contact-section">
+      <div class="contact-panel">
+        <h2 class="contact-title">期待與您開創無限可能 🚀</h2>
+        <p class="contact-subtitle">
+          不論您對 AI 自動化、網頁前後端整合或創意設計感興趣，歡迎至我的 GitHub 相互交流！
+        </p>
+        <a href="https://github.com/OoallenoO123123123" target="_blank" class="contact-btn">
+          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          <span>造訪我的 GitHub</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 頁尾 -->
+  <footer>
+    <p>
+      ✨ 由 <a href="https://github.com/OoallenoO123123123" target="_blank">OoallenoO123123123</a> 精心設計與編寫
+      · 採用 <a href="https://uupm.cc" target="_blank">UI/UX Pro Max</a> 極光系統
+      · 2026
+    </p>
+  </footer>
+
+  <script>
+    // ===== 1. 打字機特效 =====
+    const phrases = [
+      '探索 AI Agentic Coding 領域的開發者',
+      '熱衷於人工智慧與機器學習的探索者',
+      '精通 JavaScript 與 PHP 網頁全端工程',
+      '致力於打造極致 UI/UX 體驗的切版設計師'
+    ];
+    let phraseIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    const typingEl = document.getElementById('typingText');
+
+    function typeEffect() {
+      const current = phrases[phraseIdx];
+      if (!isDeleting) {
+        typingEl.textContent = current.substring(0, charIdx + 1);
+        charIdx++;
+        if (charIdx === current.length) {
+          isDeleting = true;
+          setTimeout(typeEffect, 2000);
+          return;
+        }
+      } else {
+        typingEl.textContent = current.substring(0, charIdx - 1);
+        charIdx--;
+        if (charIdx === 0) {
+          isDeleting = false;
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+        }
+      }
+      setTimeout(typeEffect, isDeleting ? 40 : 80);
+    }
+    document.addEventListener('DOMContentLoaded', typeEffect);
+
+    // ===== 2. 統計數據動畫 =====
+    function animateCount(el, target, duration = 1600) {
+      let start = 0;
+      const startTime = performance.now();
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // easeOutQuart 效果
+        const eased = 1 - Math.pow(1 - progress, 4);
+        el.textContent = Math.floor(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(update);
+    }
+
+    // 當 Hero 進入視野時播放動畫
+    const heroSec = document.getElementById('home');
+    const countReposEl = document.getElementById('countRepos');
+    const countStarsEl = document.getElementById('countStars');
+    let hasAnimated = false;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !hasAnimated) {
+          hasAnimated = true;
+          animateCount(countReposEl, 6);
+          animateCount(countStarsEl, 1, 1000);
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(heroSec);
+
+    // ===== 3. 卡片動態滑鼠跟隨效果 =====
+    document.querySelectorAll('.glass-card, .stat-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    // ===== 4. 滾動淡入特效 =====
+    const scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.05 });
+
+    document.querySelectorAll('.glass-card, .skill-badge, .contact-panel').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+      scrollObserver.observe(el);
+    });
+  </script>
+</body>
+</html>
